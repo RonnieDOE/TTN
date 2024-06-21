@@ -5,9 +5,10 @@ pipeline {
         }
     }
  
-environment {
-    PATH = '/opt/apache-maven-3.9.8/bin/:$PATH'
-}
+    environment {
+        PATH+EXTRA = '/opt/apache-maven-3.9.8/bin'
+    }
+
     stages {
         stage('build') {
             steps {
