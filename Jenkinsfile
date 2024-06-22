@@ -3,18 +3,23 @@ pipeline {
         node {
             label 'maven-slave'
             customWorkspace '/home/ubuntu/jenkins/workspace/Trend_Multi_Branch_Pipeline_main'
-            with {
-                [cpu: '2', memory: '8G'] // Ensure sufficient resources
-            }
         }
     }
- 
+
     environment {
         PATH = "/opt/apache-maven-3.9.8/bin:${env.PATH}"
     }
 
     stages {
-        stage('build') {
+        stage('Checkout SCM') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']],
+                    doGenerateSubmoduleConfigurations: false, extensions: [],
+                    submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/RonnieDOE/TTN.git']]
+                ])
+            }
+        }
+        stage('Build') {
             steps {
                 sh 'mvn clean deploy'
             }
@@ -25,7 +30,7 @@ pipeline {
                 scannerHome = tool 'sonar-scanner'
             }
             steps {
-                withSonarQubeEnv('sonarqube-server') { // If you have configured more than one global server connection, you can specify its name
+                withSonarQubeEnv('sonarqube-server') {
                     sh "${scannerHome}/bin/sonar-scanner -X"
                 }
             }
