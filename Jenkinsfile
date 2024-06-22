@@ -2,6 +2,10 @@ pipeline {
     agent {
         node {
             label 'maven-slave'
+            customWorkspace '/home/ubuntu/jenkins/workspace/Trend_Multi_Branch_Pipeline_main'
+            with {
+                [cpu: '2', memory: '8G'] // Ensure sufficient resources
+            }
         }
     }
  
