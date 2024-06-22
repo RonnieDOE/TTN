@@ -1,4 +1,7 @@
 def registry = 'https://ronnieaishman.jfrog.io'
+def imageName = 'ronnieaishman.jfrog.io/ronnie-docker-local/ttrend'
+def version   = '2.1.2'
+
 pipeline {
     agent {
         node {
@@ -20,6 +23,7 @@ pipeline {
                 ])
             }
         }
+
         stage('Build') {
             steps {
                 echo "############# build started #############"
@@ -27,7 +31,7 @@ pipeline {
                 echo "############# build completed #############"
             }
         }
-        
+
         stage('Test') {
             steps {
                 echo "############# unit test started #############"
@@ -64,7 +68,7 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
-                    def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "artifact_cred"
+                    def server = Artifactory.newServer(url: registry + "/artifactory", credentialsId: "artifact_cred")
                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
                     def uploadSpec = """{
                           "files": [
@@ -72,8 +76,8 @@ pipeline {
                               "pattern": "jarstaging/(*)",
                               "target": "artifactory-libs-release-local/{1}",
                               "flat": "false",
-                              "props" : "${properties}",
-                              "exclusions": [ "*.sha1", "*.md5"]
+                              "props": "${properties}",
+                              "exclusions": ["*.sha1", "*.md5"]
                             }
                          ]
                      }"""
@@ -82,7 +86,29 @@ pipeline {
                     server.publishBuildInfo(buildInfo)
                     echo '<--------------- Jar Publish Ended --------------->'  
                 }
-            }   
-        } 
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                script {
+                    echo '<--------------- Docker Build Started --------------->'
+                    app = docker.build(imageName + ":" + version)
+                    echo '<--------------- Docker Build Ended --------------->'
+                }
+            }
+        }
+
+        stage('Docker Publish') {
+            steps {
+                script {
+                    echo '<--------------- Docker Publish Started --------------->'
+                    docker.withRegistry(registry + '/v2', 'artifact_cred') {
+                        app.push()
+                    }
+                    echo '<--------------- Docker Publish Ended --------------->'  
+                }
+            }
+        }
     }
 }
