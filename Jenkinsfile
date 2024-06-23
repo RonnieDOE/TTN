@@ -116,7 +116,11 @@ pipeline {
                 script {
                     echo '<--------------- Helm Deploy Started --------------->'
                     sh 'rm ttrend-0.1.0.tgz'
-                    sh 'kubectl delete ns ronnie'
+                    try {
+                        sh 'kubectl delete ns ronnie'
+                    } catch (Exception e) {
+                        echo 'Namespace deletion failed, but continuing...'
+                    }
                     sh 'helm delete ttrend'
                     sh 'helm package /home/ubuntu/ttrend/'
                     sh 'helm install ttrend ttrend-0.1.0.tgz'
