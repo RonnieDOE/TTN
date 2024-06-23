@@ -115,7 +115,7 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Helm Deploy Started --------------->'
-                    sh 'helm delete ns ronnie'
+                    sh 'kubectl delete ns ronnie'
                     sh 'helm install ttrend ttrend-0.1.0.tgz'
                     echo '<--------------- Helm Deploy Ended --------------->'
                 }
