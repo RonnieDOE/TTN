@@ -15,7 +15,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Code pulled from github onto Maven/k8s/Helm Build slave') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']],
                     doGenerateSubmoduleConfigurations: false, extensions: [],
@@ -24,7 +24,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Code') {
             steps {
                 echo "############# build started #############"
                 sh 'mvn clean deploy -Dmaven.test.skip=true'
@@ -40,7 +40,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube analysis') {
+        stage('SonarQube analysis of code quality') {
             environment {
                 scannerHome = tool 'sonar-scanner'
             }
@@ -64,7 +64,7 @@ pipeline {
             }
         }
 
-        stage('Jar Publish') {
+        stage('Publishing Artifact to Artifactory/Registry') {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
@@ -89,7 +89,7 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Docker Build Pull') {
             steps {
                 script {
                     echo '<--------------- Docker Build Started --------------->'
@@ -99,7 +99,7 @@ pipeline {
             }
         }
 
-        stage('Docker Publish') {
+        stage('Docker Container Publish For k8s use') {
             steps {
                 script {
                     echo '<--------------- Docker Publish Started --------------->'
@@ -111,7 +111,7 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy onto k8s container') {
             steps {
                 script {
                     echo '<--------------- Helm Deploy Started --------------->'
