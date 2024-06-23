@@ -17,7 +17,7 @@ spec:
       - name: jfrogcred
       containers:
       - name: ronnie-rtp
-        image: ronnieaishman.jfrog.io/ronnie-docker-local/ttrend:2.1.4
+        image: ronnieaishman.jfrog.io/ronnie-docker-local/ttrend:2.1.5
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
