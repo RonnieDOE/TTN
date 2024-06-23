@@ -1,6 +1,6 @@
 def registry = 'https://ronnieaishman.jfrog.io'
 def imageName = 'ronnieaishman.jfrog.io/ronnie-docker-local/ttrend'
-def version   = '2.1.4'
+def version   = '2.1.5'
 
 pipeline {
     agent {
@@ -115,7 +115,9 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Helm Deploy Started --------------->'
+                    sh 'rm ttrend-0.1.0.tgz'
                     sh 'kubectl delete ns ronnie'
+                    sh 'helm package ttrend'
                     sh 'helm install ttrend ttrend-0.1.0.tgz'
                     echo '<--------------- Helm Deploy Ended --------------->'
                 }
