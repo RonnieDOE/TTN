@@ -103,10 +103,18 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Docker Publish Started --------------->'
-                    docker.withRegistry(registry + '/v2', 'artifact_cred') {
+                    docker.withRegistry(registry, 'artifact_cred') {
                         app.push()
                     }
                     echo '<--------------- Docker Publish Ended --------------->'  
+                }
+            }
+        }
+
+        stage ('Deploy' ){
+            steps {
+                script {
+                    sh './deploy.sh'
                 }
             }
         }
