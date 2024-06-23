@@ -117,7 +117,8 @@ pipeline {
                     echo '<--------------- Helm Deploy Started --------------->'
                     sh 'rm ttrend-0.1.0.tgz'
                     sh 'kubectl delete ns ronnie'
-                    sh 'helm package ttrend'
+                    sh 'helm delete ttrend'
+                    sh 'helm package /home/ubuntu/ttrend/'
                     sh 'helm install ttrend ttrend-0.1.0.tgz'
                     echo '<--------------- Helm Deploy Ended --------------->'
                 }
