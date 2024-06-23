@@ -1,6 +1,6 @@
 def registry = 'https://ronnieaishman.jfrog.io'
 def imageName = 'ronnieaishman.jfrog.io/ronnie-docker-local/ttrend'
-def version   = '2.1.3'
+def version   = '2.1.4'
 
 pipeline {
     agent {
@@ -115,7 +115,7 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Helm Deploy Started --------------->'
-                    sh 'helm upgrade --install ttrend ttrend-0.1.0.tgz'
+                    sh 'helm upgrade ttrend ttrend-0.1.0.tgz'
                     echo '<--------------- Helm Deploy Ended --------------->'
                 }
             }
